@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 # Configure /etc/hosts to redirect localhost and facebook.com without using sed -i
 
+# Read and modify localhost resolution
 hosts_content=$(sed 's/127\.0\.0\.1\([[:space:]]\+\)localhost/127.0.0.2\1localhost/g' /etc/hosts)
 
+# Update or append facebook.com resolution safely
 if echo "$hosts_content" | grep -q "facebook.com"; then
-    hosts_content=$(echo "$hosts_content" | sed 's/.*facebook.com/8.8.8.8 facebook.com/g')
+    hosts_content=$(echo "$hosts_content" | sed 's/[0-9.]\+[[:space:]]\+facebook.com/8.8.8.8 facebook.com/g')
 else
-    hosts_content=$(echo -e "${hosts_content}\n8.8.8.8 facebook.com")
+    hosts_content=$(printf "%s\n8.8.8.8 facebook.com\n" "$hosts_content")
 fi
 
 echo "$hosts_content" > /etc/hosts
+
